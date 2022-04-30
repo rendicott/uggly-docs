@@ -1,0 +1,67 @@
+<html>
+<body>
+<h1>Documentation For The Uggly Protocol</h1>
+<h2>Introduction</h2>
+<p>Uggly is a means to generate Terminal User Interfaces in a client-server architecture. Think of it as TUI over-the-wire (TUIOW). The client requests content from the server via gRPC protobuffers and the client handles rendering of that content. The server is sending "pages" of content one screen at a time. The protocol and page definitions take inspiration from CSS/HTML in that there are constructs such as DivBoxes, TextBlobs, Links, and Forms for example. It is opinionated in that only keyboard strokes are supported for link navigation.</p>
+
+<p>There is a <a href="https://github.com/rendicott/uggly-client">client</a> compiled for Windows, Linux, and Mac. Servers can be written in any language that supports gRPC and protobuf (e.g, Go, Python, Java, etc.) and honors the <a href="https://github.com/rendicott/uggly">uggly</a> protocol. New clients could be written in other languages similar to the way that there are multiple web browsers today a la Firefox, Chrome, Edge, etc.
+
+<h2>Why</h2>
+When starting out as a developer, scripter you're usually trying to automate some mundane task. Generally you start out by writing a CLI app. CLI apps are amazing for their flexibility and speed but they're often times not as portable or have a steep learning curve for end users. For example, Think of giving your least computer savvy friend a CLI tool that does something mundane like rebooting a server and ask them to run it.</p>
+
+<p>There is no doubt that GUI's are useful. For instance, there's no better way to interact with some systems than being able to see data in a tabular format. Today, if someone wants to write a GUI they have to use Web languages and view it in a browser or use desktop UI toolkits such as Qt, Swift, etc. Web apps are the most accessible because almost everyone already has a web browser but they're not always the best UX design and are often bloated and slow. Desktop apps are fast and highly optimized for their single-purpose (keyboard shortcuts are amazing) but less accessible because you have to download an app for every UI you want to use.</p>
+
+<p>So if you're a developer and you're trying to share a UI with your users you're in a predicament. Do you put your time into a Web app or a Desktop app? Either of these options are non-trivial because despite their ubiquitous nature, they have steep learning curves and are often overkill for simple tasks.</p>
+
+<p>Terminal User Interfaces have been around for a <i>long</i> time. They were quite common in the early days of desktop computing so they're nothing new or terribly novel. There's actually been a resurgence in TUI's over the past few years as people look for something simpler and more novel. The efficiencies that can be had when UI's are designed for use with a keyboard only are pretty incredible--never underestimate the power of human muscle memory. However, they're still essentially a desktop application--just like the Qt and Swift applications the users have to download the application when they want to use the UI. This makes them essentially a novelty because nobody is going to build any serious TUI because they would only have a limited number of users who would use it.</p>
+
+<p>What if there was something that took some of the best of both worlds? The accessibility and flexibility of the browser and the efficiency of the TUI. This is what the uggly protocol is experimenting with. Offload the client side rendering of the TUI to the "browser" and let server developers focus on building "web apps" using concepts that they're familiar with (components, links, cookies, etc.). That way the end-users only have to download one client that lets them access any number of applications. Multi-platform support is built into the concept because every major operating system has a terminal.</p>
+
+<p>There are no doubts that this will never <i>really</i> take off because right out of the gate it has no mobile support and it's still highly unlikely that many people will opt to write a server-side TUI app instead of a web app. However, maybe making it a little bit easier could help make TUI's more ubiquitous. In any case, TUI's are a lot of fun to use and they can also be fun to write.</p>
+
+<h2>How it Works</h2>
+<pre>
+
+
+                               uggly Protocol Basic Concept
+
+      Client
+    ┌─────────────────────────┐                             Server
+    │ (generates PageRequest) │                          ┌────────────────────────────────────────────────┐
+    │ ┌─────────────────────┐ │             ┌────────────┤► (processes PageRequest                        │
+    │ │PageRequest{         │ │             │            │          │          ▼                          │
+    │ │ Name: home,         │ │             │            │          ▼                                     │
+    │ │ Server: tui.app.com,│ │             │            │  (generates PageResponse)                      │
+    │ │ Port: 8888}         │ │             │            │ ┌───────────────────────────────────────────┐  │
+    │ └─────────────────────┘ │  gRPC       │            │ │PageResponse{                              │  │
+    │ GetPage(PageRequest)    ├─────────────┘            │ │  Name: home,                              │  │
+    └─────────────────────────┘                          │ │  DivBoxes: [div1=(x,y,height,width,color)]│  │
+                                                         │ │  Elements: [                              │  │
+    ┌──────────────────────────────┐      gRPC           │ │     TextBlobs: [text1, text2],            │  │
+    │  (processes PageResponse) ◄──┼─────────────────────┼─┤     Forms: [form1],                       │  │
+    │             │                │                     │ │  ],                                       │  │
+    │             ▼                │                     │ │  KeyStrokes: [                            │  │
+    │  (renders components, sets   │                     │ │     "n" => page:news,                     │  │
+    │   cookies, polls for         │                     │ │     "a" => page:about,                    │  │
+    │  provided keystrokes)        │                     │ │  ],                                       │  │
+    │                              │                     │ │  Cookies: [theme: "dark"],                │  │
+    │  ┌────────────────────────┐  │                     │ │ }                                         │  │
+    │  │┼──────────────────────┼│  │                     │ └───────────────────────────────────────────┘  │
+    │  ││                      ││  │                     │                                                │
+    │  ││ ┌──┐ ┌───┐ ┌───────┐ ││  │                     └────────────────────────────────────────────────┘
+    │  ││ └──┘ └───┘ └───────┘ ││  │
+    │  ││                      ││  │
+    │  │┼──────────────────────┼│  │
+    │  └────────────────────────┘  │
+    │                              │
+    │  (key press generates new    │
+    │   PageRequest, repeat        │
+    │    process)                  │
+    │                              │
+    │                              │
+    └──────────────────────────────┘
+</pre>
+
+
+</body>
+</html>
