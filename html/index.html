@@ -1,12 +1,31 @@
 <html>
 <body>
-<h1>Documentation For The Uggly Protocol</h1>
-<h2>Introduction</h2>
+<h1>Uggly Documentation</h1>
+<ul>
+<li><a href="#introduction">1 Introduction</a>
+<li><a href="#why">1.1 Why</a>
+<li><a href="#demo">1.2 Try A Demo</a>
+<li><a href="#how-it-works">1.3 How It Works</a>
+<li><a href="#how-to-build-servers">2 How to Build Servers</a>
+</ul>
+<h2 id="introduction">Introduction</h2>
 <p>Uggly is a means to generate Terminal User Interfaces in a client-server architecture. Think of it as TUI over-the-wire (TUIOW). The client requests content from the server via gRPC protobuffers and the client handles rendering of that content. The server is sending "pages" of content one screen at a time. The protocol and page definitions take inspiration from CSS/HTML in that there are constructs such as DivBoxes, TextBlobs, Links, and Forms for example. It is opinionated in that only keyboard strokes are supported for link navigation.</p>
 
 <p>There is a <a href="https://github.com/rendicott/uggly-client">client</a> compiled for Windows, Linux, and Mac. Servers can be written in any language that supports gRPC and protobuf (e.g, Go, Python, Java, etc.) and honors the <a href="https://github.com/rendicott/uggly">uggly</a> protocol. New clients could be written in other languages similar to the way that there are multiple web browsers today a la Firefox, Chrome, Edge, etc.
 
-<h2>Why</h2>
+<table border=1 align=center>
+<tr>
+<td>
+	<img width="45%" src="./img/windows.png"></img>
+	<p>Windows Client running in Powershell terminal window connected to a python server displaying a dynamic table.</p>
+</td>
+<td><img width="45%" src="./img/windows2.png"></img>
+	<p>Windows Client running in Powershell terminal window connected to a Golang server handling a login workflow</p>
+</td>
+</tr>
+</table>
+
+<h2 id="why">Why</h2>
 When starting out as a developer, scripter you're usually trying to automate some mundane task. Generally you start out by writing a CLI app. CLI apps are amazing for their flexibility and speed but they're often times not as portable or have a steep learning curve for end users. For example, Think of giving your least computer savvy friend a CLI tool that does something mundane like rebooting a server and ask them to run it.</p>
 
 <p>There is no doubt that GUI's are useful. For instance, there's no better way to interact with some systems than being able to see data in a tabular format. Today, if someone wants to write a GUI they have to use Web languages and view it in a browser or use desktop UI toolkits such as Qt, Swift, etc. Web apps are the most accessible because almost everyone already has a web browser but they're not always the best UX design and are often bloated and slow. Desktop apps are fast and highly optimized for their single-purpose (keyboard shortcuts are amazing) but less accessible because you have to download an app for every UI you want to use.</p>
@@ -17,13 +36,33 @@ When starting out as a developer, scripter you're usually trying to automate som
 
 <p>What if there was something that took some of the best of both worlds? The accessibility and flexibility of the browser and the efficiency of the TUI. This is what the uggly protocol is experimenting with. Offload the client side rendering of the TUI to the "browser" and let server developers focus on building "web apps" using concepts that they're familiar with (components, links, cookies, etc.). That way the end-users only have to download one client that lets them access any number of applications. Multi-platform support is built into the concept because every major operating system has a terminal.</p>
 
-<p>There are no doubts that this will never <i>really</i> take off because right out of the gate it has no mobile support and it's still highly unlikely that many people will opt to write a server-side TUI app instead of a web app. However, maybe making it a little bit easier could help make TUI's more ubiquitous. In any case, TUI's are a lot of fun to use and they can also be fun to write.</p>
+<p>There are no doubts that this will never <i>really</i> take off because right out of the gate it has no images, no mobile support and it's still highly unlikely that many people will opt to write a server-side TUI app instead of a web app. However, maybe making it a little bit easier could help make TUI's more ubiquitous. In any case, TUI's are a lot of fun to use and they can also be fun to write.</p>
 
-<h2>How it Works</h2>
+<h2 id="demo">Try a Demo</h2>
+<ol>
+<li>Download the client for your architecture <a href="https://github.com/rendicott/uggly-client/releases/latest">here.</a>
+<li>Unpack the tarball. 
+<li>Then run the client in a terminal.
+<ul>
+	<li>For windows you can run the .exe in either CMD or Powershell.
+</ul>
+<li>You'll be presented with a blank screen. Try hitting <F1> and typing one of the following addresses in the address bar:
+<ul>
+	<li><pre> ugtps://ttt.bytester.net:443/login </pre>
+	<li><pre> ugtps://ttt.bytester.net:1443/astro </pre>
+</ul>
+<li>You can explore those sites and if you want you can bookmark them by hitting <F7> so you don't have to type it again.
+</ol>
+
+<h2 id="how-it-works">How it Works</h2>
+<p>It's kind of like a how a browser requests a page from a web server except that it's using a different protocol than HTML. They key difference is that there is no client side code (e.g., Javascript) and each screen that a user sees is generated on-demand by the server when the client makes the request. For, example, content that exceeds the size of the client's screen should be broken up into multiple pages by the server.  Also, the server dictates what key-presses are available for link actions.</p>
+
+<p>The below diagram may offer a better explanation:</p>
+  
 <pre>
 
 
-                               uggly Protocol Basic Concept
+                               uggly Protocol Basic Concept (pseudocode)
 
       Client
     ┌─────────────────────────┐                             Server
@@ -61,6 +100,11 @@ When starting out as a developer, scripter you're usually trying to automate som
     │                              │
     └──────────────────────────────┘
 </pre>
+
+
+Since there is already an existing <a href="https://github.com/rendicott/uggly-client">client</a> that you can use it may be more helpful to just talk about how one writes a server. 
+
+<h1 id="how-to-build-servers">How to Build Servers</h1>
 
 
 </body>
