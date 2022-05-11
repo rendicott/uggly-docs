@@ -7,6 +7,9 @@
 <li><a href="#demo">1.2 Try A Demo</a>
 <li><a href="#how-it-works">1.3 How It Works</a>
 <li><a href="#how-to-build-servers">2 How to Build Servers</a>
+<li><a href="#how-to-build-servers">2.1 Python Servers</a>
+<li><a href="#how-to-build-servers">2.2 Go Servers</a>
+<li><a href="#how-to-host-servers">2.3 How to Host Servers</a>
 </ul>
 <h2 id="introduction">Introduction</h2>
 <p>Uggly is a means to generate Terminal User Interfaces in a client-server architecture. Think of it as TUI over-the-wire (TUIOW). The client requests content from the server via gRPC protobuffers and the client handles rendering of that content. The server is sending "pages" of content one screen at a time. The protocol and page definitions take inspiration from CSS/HTML in that there are constructs such as DivBoxes, TextBlobs, Links, and Forms for example. It is opinionated in that only keyboard strokes are supported for link navigation.</p>
@@ -46,12 +49,12 @@ When starting out as a developer, scripter you're usually trying to automate som
 <ul>
 	<li>For windows you can run the .exe in either CMD or Powershell.
 </ul>
-<li>You'll be presented with a blank screen. Try hitting <F1> and typing one of the following addresses in the address bar:
+<li>You'll be presented with a blank screen. Try hitting (F1) and typing one of the following addresses in the address bar:
 <ul>
-	<li><pre> ugtps://ttt.bytester.net:443/login </pre>
-	<li><pre> ugtps://ttt.bytester.net:1443/astro </pre>
+	<li><pre> ugtps://ttt.bytester.net:443/login </pre> - This is a site that demonstrates the platform's abilities at handling sessions and cookies similar to an HTTP browser. This server is written in golang and the code for this demo can be found <a href="https://github.com/rendicott/uggly-server-login">here.</a>
+	<li><pre> ugtps://ttt.bytester.net:1443/astro </pre> - This is a site that demonstrates how you can scroll through large amounts of dynamic content using keystrokes. This server is written in python and the code for the demo can be found <a href="https://github.com/rendicott/puggly-server">here.</a>
 </ul>
-<li>You can explore those sites and if you want you can bookmark them by hitting <F7> so you don't have to type it again.
+<li>You can explore those sites and if you want you can bookmark them by hitting (F7) so you don't have to type it again.
 </ol>
 
 <h2 id="how-it-works">How it Works</h2>
@@ -105,7 +108,64 @@ When starting out as a developer, scripter you're usually trying to automate som
 Since there is already an existing <a href="https://github.com/rendicott/uggly-client">client</a> that you can use it may be more helpful to just talk about how one writes a server. 
 
 <h1 id="how-to-build-servers">How to Build Servers</h1>
+<p>If you're familiar with gRPC then building servers should be fairly straightforward. Both the Python an Go starter guides from <a href="https://grpc.io/">grpc.io</a> were used to form the base of the following sections. If you prefer to write servers in a different language then the <a href="https://github.com/rendicott/uggly">uggly protobuf</a> will be your only guide.</p>
 
+
+<h2 id="host-python">Python Server</h2>
+<p>Start with the <a href="https://github.com/rendicott/uggly/tree/master/samples/python">python sample hello world</a>.</p>
+
+
+<h2 id="host-go">Go Server</h2>
+<p>Start with the <a href="https://github.com/rendicott/uggly/tree/master/samples/go">go sample hello world</a>.</p>
+
+<h2 id="how-to-host-servers">How to Host Servers</h2>
+<p>You'll need some sort of compute for hosting as there's not many ways to host a gRPC server in a "serverless" fashion. Supposedly on <a href="https://cloud.google.com/blog/products/serverless/cloud-run-now-supports-http-grpc-server-streaming">GCP you can do it with Cloud Run</a> but on traditional hosting or on AWS this means hosting on some sort of server or container. For AWS this is EC2, EKS, ECS, etc. AWS Application Load Balancers (ALB) <a href="https://aws.amazon.com/blogs/aws/new-application-load-balancer-support-for-end-to-end-http-2-and-grpc/">support gRPC</a>, so that's nice. </p>
+
+<p>Docker is a good solution so you don't have to mess around with systemd wrappers, etc. The above demo sites (e.g., 'ugtps://ttt.bytester.net:443') are hosted on AWS ECS behind an ALB using the ECS native Blue/Green deployment with CodeDeploy. The actual hosting of the gRPC server was easy but the ECS bits with CodeDeploy were needlessly complex, IMO. Here is what the architecture looks like.</p>
+<pre>
+
+      Uggly Server Hosting on AWS ECS
+
+                                 ┌──────────────────────────┐
+                                 │ Route53                  │
+                                 │                          │
+                                 │  ttt.bytester.net        │
+                                 └───────────┬──────────────┘
+                                             │
+               ┌─────────────────────────────┼──────────────────────────────┐
+               │ EC2                         │                              │
+               │           ┌─────────────────▼──────────────────────┐       │
+               │           │ ALB                                    │       │
+               │           │     SSL                     SSL        │       │
+               │           │   Listener                Listener     │       │
+               │           │    TCP 443                TCP 1433     │       │
+               │           │                                        │       │
+               │           └──┬─────────────────────────────┬───────┘       │
+               │              │                             │               │
+               │  ┌───────────▼────────┐         ┌──────────▼─────────┐     │
+               │  │ Target Group gRPC  │         │ Target Group gRPC  │     │
+               │  │                    │         │                    │     │
+               │  │                    │         │                    │     │
+               │  └────────┬───────────┘         └───────────┬────────┘     │
+               │           │                                 │              │
+               └───────────┼─────────────────────────────────┼──────────────┘
+                           │                                 │
+                           │                                 │
+                           │                                 │
+        ┌──────────────────┼─────────────────────────────────┼───────────────────┐
+        │   ECS Fargate    │                                 │                   │
+        │                  │                                 │                   │
+        │                  │                                 │                   │
+        │        ┌─────────▼────────────┐            ┌───────▼──────────────┐    │
+        │        │ uggly-server-login   │            │ puggly-server        │    │
+        │        │    (go container)    │            │  (python container)  │    │
+        │        │      TCP 80          │            │    TCP 50051         │    │
+        │        └──────────────────────┘            └──────────────────────┘    │
+        │                                                                        │
+        └────────────────────────────────────────────────────────────────────────┘
+
+
+</pre>
 
 </body>
 </html>
