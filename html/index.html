@@ -1,28 +1,50 @@
 <html>
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+body {
+    font-family: Optima, Candara, Calibri, Arial, sans-serif;
+}
+</style>
 <body>
 <h1>Uggly Documentation</h1>
 <ul>
 <li><a href="#introduction">1 Introduction</a>
-<li><a href="#why">1.1 Why</a>
-<li><a href="#demo">1.2 Try A Demo</a>
-<li><a href="#how-it-works">1.3 How It Works</a>
+	<ul>
+	<li><a href="#why">1.1 Why</a>
+	<li><a href="#demo">1.2 Try A Demo</a>
+	<li><a href="#how-it-works">1.3 How It Works</a>
+	</ul>
 <li><a href="#how-to-build-servers">2 How to Build Servers</a>
-<li><a href="#hello-world">2.1 Hello World Servers</a>
-<li><a href="#server-guide">2.3 Generic Server Guide</a>
-<li><a href="#how-to-host-servers">2.4 How to Host Servers</a>
+	<ul>
+	<li><a href="#hello-world">2.1 Hello World Servers</a>
+	<li><a href="#server-guide">2.3 Generic Server Guide</a>
+		<ul>
+		<li><a href="#request">2.3.1 PageRequest</a>
+		<li><a href="#response">2.3.2 PageResponse</a>
+		</ul>
+	<li><a href="#how-to-host-servers">2.4 How to Host Servers</a>
+	</ul>
 </ul>
 <h2 id="introduction">Introduction</h2>
-<p>Uggly is a means to generate Terminal User Interfaces in a client-server architecture. Think of it as TUI over-the-wire (TUIOW). The client requests content from the server via gRPC protobuffers and the client handles rendering of that content. The server is sending "pages" of content one screen at a time. The protocol and page definitions take inspiration from CSS/HTML in that there are constructs such as DivBoxes, TextBlobs, Links, and Forms for example. It is opinionated in that only keyboard strokes are supported for link navigation.</p>
+<p>Uggly is a means to generate Terminal User Interfaces in a client-server architecture. Think of it as TUI over-the-wire (TUIOW). The client requests content from the server via gRPC protobuffers and the client handles rendering of that content. The server is sending "pages" of content one screen at a time. The protocol and page definitions take inspiration from CSS/HTML in that there are constructs such as <code>DivBoxes</code>, <code>TextBlobs</code>, <code>Links</code>, and <code>Forms</code> for example. It is opinionated in that only keyboard strokes are supported for link navigation.</p>
 
 <p>There is a <a href="https://github.com/rendicott/uggly-client">client</a> compiled for Windows, Linux, and Mac. Servers can be written in any language that supports gRPC and protobuf (e.g, Go, Python, Java, etc.) and honors the <a href="https://github.com/rendicott/uggly">uggly</a> protocol. New clients could be written in other languages similar to the way that there are multiple web browsers today a la Firefox, Chrome, Edge, etc.
 
-<table border=1 align=center>
+<table style="width:70%;margin-left:auto;margin-right:auto;" ><tr><td>
 <tr>
 <td>
-	<img width="45%" src="./img/windows.png"></img>
+	<a target="_blank" href="./img/windows.png">
+	  <img width="30%" src="./img/windows.png">
+	</a>
 	<p>Windows Client running in Powershell terminal window connected to a python server displaying a dynamic table.</p>
 </td>
-<td><img width="45%" src="./img/windows2.png"></img>
+<td>
+	<a target="_blank" href="./img/windows2.png">
+	  <img width="45%" src="./img/windows2.png">
+	</a>
 	<p>Windows Client running in Powershell terminal window connected to a Golang server handling a login workflow</p>
 </td>
 </tr>
@@ -49,12 +71,12 @@ When starting out as a developer, scripter you're usually trying to automate som
 <ul>
 	<li>For windows you can run the .exe in either CMD or Powershell.
 </ul>
-<li>You'll be presented with a blank screen. Try hitting (F1) and typing one of the following addresses in the address bar:
+<li>You'll be presented with a blank screen. Try hitting <code>(F1)</code> and typing one of the following addresses in the address bar:
 <ul>
-	<li><pre> ugtps://ttt.bytester.net:443/login </pre> - This is a site that demonstrates the platform's abilities at handling sessions and cookies similar to an HTTP browser. This server is written in golang and the code for this demo can be found <a href="https://github.com/rendicott/uggly-server-login">here.</a>
-	<li><pre> ugtps://ttt.bytester.net:1443/astro </pre> - This is a site that demonstrates how you can scroll through large amounts of dynamic content using keystrokes. This server is written in python and the code for the demo can be found <a href="https://github.com/rendicott/puggly-server">here.</a>
+	<li><code>ugtps://ttt.bytester.net:443/login</code> - This is a site that demonstrates the platform's abilities at handling sessions and cookies similar to an HTTP browser. This server is written in golang and the code for this demo can be found <a href="https://github.com/rendicott/uggly-server-login">here.</a> Create a user on the site (don't worry, it's just hashed passwords stored in memory) and play around with the keyboard navigation flows, logout, etc. Take note of how Cookies may be stored and will let you back in without typing your password again if you leave the site and come back. 
+	<li><code> ugtps://ttt.bytester.net:1443/astro </code> - This is a site that demonstrates how you can scroll through large amounts of dynamic content using keystrokes. This server is written in python and the code for the demo can be found <a href="https://github.com/rendicott/puggly-server">here.</a>
 </ul>
-<li>You can explore those sites and if you want you can bookmark them by hitting (F7) so you don't have to type it again.
+<li>You can explore those sites and if you want you can bookmark them by hitting <code>(F7)</code> so you don't have to type it again.
 </ol>
 
 <h2 id="how-it-works">How it Works</h2>
@@ -109,7 +131,7 @@ Since there is already an existing <a href="https://github.com/rendicott/uggly-c
 
 <h1 id="how-to-build-servers">How to Build Servers</h1>
 <p>The only way to get more great TUI's is to have more people write more of them. I tried to make authoring servers easy and it can be a lot of fun once you get into it. There's something refreshing about using simple building blocks that are easy to understand that make for a very satisfying end product. </p>
-<p>If you're familiar with gRPC then building servers should be fairly straightforward. Both the Python an Go starter guides from <a href="https://grpc.io/">grpc.io</a> were used to form the base of the following sections. If you prefer to write servers in a different language then the <a href="https://github.com/rendicott/uggly">uggly protobuf</a> will be your only guide.</p>
+<p>If you're familiar with gRPC then building servers should be fairly straightforward. Both the Python an Go starter guides from <a href="https://grpc.io/">grpc.io</a> were used to form the base of the following sections. There are also several example sites written in Golang and Python which will be linked to throughout the documentation. If you prefer to write servers in a different language then the <a href="https://github.com/rendicott/uggly">uggly protobuf</a> will be your only guide.</p>
 
 <h2 id="hello-world">Hello-World Servers</h2>
 
@@ -119,12 +141,13 @@ Since there is already an existing <a href="https://github.com/rendicott/uggly-c
 
 <p>For Golang, start with the <a href="https://github.com/rendicott/uggly/tree/master/samples/go">go sample hello world</a>.</p>
 
-<h2 id="server-guide">Generic Server Guide</h2>
-<p>The initial hurdle of writing uggly servers is understanding the core concepts and that is mostly language agnostic. This section will be all about understanding the basics, core design principles, and tips and tricks. </p>
+<h2 id="server-guide">Generic Server Guide</h2> <p>The initial hurdle of writing uggly servers is understanding the core concepts and that is mostly language agnostic. This section will be all about understanding the basics, core design principles, and tips and tricks. All "code" in this section is pseudocode and is pointless to copy paste. You'll need to tweak it for whatever language you're writing your server in.</p>
 
-<p>The heart of every server is the `GetPage` handler which accepts `PageRequest` and returns `PageResponse`. Let's take a look at an excerpt from the docs of a <a href="https://github.com/rendicott/uggly/tree/master/doc#pagerequest">`PageRequest`</a></p>
+<p>The heart of every server is the <code>GetPage</code> handler which accepts <code>PageRequest</code> and returns <code>PageResponse</code>. Let's take a look at both of these in detail. 
+<h4 id="request">PageRequest</h4>
+Here's an excerpt from the <a href="https://github.com/rendicott/uggly/tree/master/doc">uggly protocol docs</a> of a PageRequest</a></p>
 
-<table center=true border=1 width="50%"><tr><td>
+<table style="width:60%;margin-left:auto;margin-right:auto;" ><tr><td>
 <p>A PageRequest contains the name of the
 desired page and some metadata about the
 cient height and width. The server can choose
@@ -133,9 +156,7 @@ on statically sized content. Also, the server could
 generate a PageResponse saying something like
 "this server insists on a minimum height to view
 content" for example.</p>
-
-
-<table border=1>
+<table style="width:90%;margin-left:auto;margin-right:auto;">
 <thead> <tr> <th>Field</th> <th>Type</th> <th>Label</th> <th>Description</th> </tr> </thead>
 <tbody>
 <tr> <td>name</td> <td>string</td> <td></td> <td>The name of the page being requested</td> </tr>
@@ -149,7 +170,370 @@ content" for example.</p>
 <tr> <td>stream</td> <td>bool</td> <td></td> <td>whether or not the request is for a page stream</td> </tr>
 </tbody>
 </table>
+Source: <a href="https://github.com/rendicott/uggly/tree/master/doc#pagerequest">PageRequest</a>
 </td></tr></table>
+<p>So from the server side this is what you'll be processing from a client in your <code>GetPage</code> function. The first thing to note is that a server only has one <code>GetPage</code> function that accepts <code>PageRequest</code> so if you want to serve more than one page you'll need to route requests to different handlers as demonstrated in this pseudocode:</p>
+<table><tr><td>
+<pre>
+func GetPage(pq PageRequest) (pr PageResponse) {
+	if pq.Name == "foo" {
+		return foo(pq) 
+	}
+	if pq.Name == "bar" {
+		return bar(pq)
+	}
+}
+
+func foo(PageRequest) (PageResponse) {
+	// generate foo response
+}
+
+func bar(PageRequest) (PageResponse) {
+	// generate bar response
+}
+</pre> 
+</td></tr></table>
+
+<p>The <code>clientWidth</code> and <code>clientHeight</code> fields may be of interest if you want to generate dynamically sized content.</p>
+
+<table><tr><td>
+<pre>
+func GetPage(pq PageRequest) (pr PageResponse) {
+	pr.DivBoxes.Boxes.append(
+		DivBox{
+			Name: "main",
+			Width: pq.ClientWidth / 2,
+			Height: pq.ClientHeight / 2,
+		}
+	)
+	pr.Elements.TextBlobs.append(
+		TextBlob{
+			Content: "lorem ipsum",
+			Wrap: true,	
+			DivBoxes: []string("main"),
+		}
+	)
+	return pr
+}
+
+</pre> 
+</td></tr></table>
+<p> Alternatively, you could insist on a certain client size.</p>
+<table><tr><td>
+<pre>
+func GetPage(pq PageRequest) (pr PageResponse) {
+	if pq.ClientWidth <= 500 {
+		return clientTooSmall(pq)
+	} else {
+		return fixedSizeResponse(pq)
+	}
+}
+
+func clientTooSmall(PageRequest) (PageResponse) {
+	// generate response telling the user
+	// their screen is too small
+}
+
+func fixedSizeResponse(pq PageRequest) (pr PageResponse) {
+	pr.DivBoxes.Boxes.append(
+		DivBox{
+			Name: "main",
+			Width: 499,
+			Height: 100,
+		}
+	)
+	pr.Elements.TextBlobs.append(
+		TextBlob{
+			Content: (lots of text)
+			DivBoxes: []string("main"),
+		}
+	)
+	return pr
+}
+
+</pre> 
+</td></tr></table>
+
+<p>You can almost always ignore the <code>server</code>, <code>port</code>, and <code>secure</code> parameters as those are mostly for the client side to establish a connection with the server. However, if you wanted you could reference them.</p>
+
+<p>For now we'll skip over <code>FormData</code> and <code>stream</code> and talk about those later on.</p>
+
+<h4 id="response">PageResponse</h4>
+<p>Now that we've covered the <code>PageRequest</code> it's time to look into more detail at how we craft a response. Again, we'll refer to the documentation.</p>
+
+
+<table style="width:60%;margin-left:auto;margin-right:auto;" ><tr><td>
+<p>The PageResponse contains modular content
+that the server wishes the client to display
+in the form of DivBoxes, Elements, and Links.</p>
+<table style="width:90%;margin-left:auto;margin-right:auto;">
+<thead> <tr> <th>Field</th> <th>Type</th> <th>Label</th> <th>Description</th> </tr> </thead>
+<tbody>
+<tr> <td>divBoxes</td> <td><a href="https://github.com/rendicott/uggly/tree/master/doc#uggly-DivBoxes">DivBoxes</a></td> <td></td> <td>divBoxes contains all of the divBoxes to be rendered for this page</td> </tr>
+<tr> <td>elements</td> <td><a href="https://github.com/rendicott/uggly/tree/master/doc#uggly-Elements">Elements</a></td> <td></td> <td>elements contains all of the non divBox elements to be rendered for this page</td> </tr>
+<tr> <td>name</td> <td>string</td> <td></td> <td>the name of the page to be rendered</td> </tr>
+<tr> <td>keyStrokes</td> <td><a href="https://github.com/rendicott/uggly/tree/master/doc#uggly-KeyStroke">KeyStroke</a></td> <td>repeated</td> <td>a list of keystrokes that the client should honor, these could be of type link, formActivation, or divScroll</td> </tr>
+<tr> <td>setCookies</td> <td><a href="https://github.com/rendicott/uggly/tree/master/doc#uggly-Cookie">Cookie</a></td> <td>repeated</td> <td>any cookies that the server is requesting the client to set for future requests</td> </tr>
+<tr> <td>streamDelayMs</td> <td>int32</td> <td></td> <td>if the response is part of a stream then this is the time in milliseconds the client should wait before drawing the next request</td> </tr>
+</tbody>
+</table>
+Source: <a href="https://github.com/rendicott/uggly/tree/master/doc#pageresponse">PageResponse</a>
+</td></tr></table>
+
+<p>The <code>PageResponse</code> is the heart of the system. This is what the client renders to display pages, parse keystrokes, and activate forms. The server could have a list of hard coded <code>PageResponse</code> that it just returns to clients upon request or it could generate them dynamically based on changing conditions. Either way, there are two fundamental building blocks to every <code>PageResponse</code> -- the <code>DivBoxes</code> and the <code>TextBlob</code> which are stored under <code>Elements</code> in the response.</p>
+
+<p>See an example of the use of <code>DivBox</code> and <code>TextBlob</code> in the below pseudocode with a pseudo rendering side by side:</p>
+
+<table style="width:90%;margin-left:auto;margin-right:auto;" ><tr><td>
+<p>Here we see two <code>DivBoxes</code> with two separate <code>TextBlob</code> for content. The boxes are placed so that there is buffer/padding between them.</p>
+
+<pre>
+func GetPage(pq PageRequest) (pr PageResponse) {
+	pr.DivBoxes.Boxes.append(
+		DivBox{
+			Name: "main",
+			Width: 10,
+			Height: 10,
+			StartX: 5,
+			StartY: 5,
+		}
+	)
+	pr.DivBoxes.Boxes.append(
+		DivBox{
+			Name: "main2",
+			Width: 10,
+			Height: 10,
+			StartX: 20,
+			StartY: 5,
+		}
+	)
+	pr.Elements.TextBlobs.append(
+		TextBlob{
+			Content: "hello",
+			DivBoxes: []string("main"),
+		}
+	)
+	pr.Elements.TextBlobs.append(
+		TextBlob{
+			Content: "world",
+			DivBoxes: []string("main2"),
+		}
+	)
+	return pr
+}
+
+</pre> 
+</td>
+<td>
+<pre>
+
+  ┌───────────────────────────────────────────────────────────┐
+  │                                                           │
+  │  ┌─────────────────────┐  ┌──────────────────────┐        │
+  │  │ hello               │  │ world                │        │
+  │  │                     │  │                      │        │
+  │  │                     │  │                      │        │
+  │  │                     │  │                      │        │
+  │  │                     │  │                      │        │
+  │  │                     │  │                      │        │
+  │  │                     │  │                      │        │
+  │  │                     │  │                      │        │
+  │  └─────────────────────┘  └──────────────────────┘        │
+  │                                                           │
+  │                                                           │
+  │                                                           │
+  │                                                           │
+  │                                                           │
+  │                                                           │
+  │                                                           │
+  │                                                           │
+  │                                                           │
+  │                                                           │
+  │                                                           │
+  │                                                           │
+  │                                                           │
+  └───────────────────────────────────────────────────────────┘
+
+</pre>
+</td>
+</tr>
+<tr>
+<td>
+<p>Here we see two <code>DivBox</code> and a single <code>TextBlob</code> assigned to two different boxes. The Boxes are placed in such a way as there is no buffer.</p>
+<pre>
+func GetPage(pq PageRequest) (pr PageResponse) {
+	pr.DivBoxes.Boxes.append(
+		DivBox{
+			Name: "main",
+			Width: 10,
+			Height: 10,
+			StartX: 5,
+			StartY: 5,
+		}
+	)
+	pr.DivBoxes.Boxes.append(
+		DivBox{
+			Name: "main2",
+			Width: 10,
+			Height: 10,
+			StartX: 10,
+			StartY: 10,
+		}
+	)
+	pr.Elements.TextBlobs.append(
+		TextBlob{
+			Content: "hello",
+			DivBoxes: []string("main", "main2"),
+		}
+	)
+	return pr
+}
+
+</pre> 
+</td><td>
+<pre>
+
+    ┌───────────────────────────────────────┐
+    │                                       │
+    │  ┌─────────────────────┐              │
+    │  │ hello               │              │
+    │  │                     │              │
+    │  │     ┌─────────────── ──────┐       │
+    │  │     │ hello                │       │
+    │  │     │                      │       │
+    │  │     │                      │       │
+    │  │     │                      │       │
+    │  │     │                      │       │
+    │  └─────┼                      │       │
+    │        │                      │       │
+    │        │                      │       │
+    │        └──────────────────────┘       │
+    │                                       │
+    │                                       │
+    │                                       │
+    │                                       │
+    │                                       │
+    │                                       │
+    │                                       │
+    │                                       │
+    │                                       │
+    │                                       │
+    └───────────────────────────────────────┘
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>As you can see, each <code>PageResponse</code> is just a list of these basic elements. </p>
+
+<h4 id="keystrokes">KeyStrokes</h4>
+<p>The next topic that isn't exactly intuitive is that of the <code>KeyStroke</code> which can be included in any <code>PageResponse</code> as a list of actions that should be honored by the client. The following example shows how they can be used at a very basic level.</p>
+
+
+<table style="width:90%;margin-left:auto;margin-right:auto;" ><tr><td>
+<p>Here we have a server with two methods for returning a <code>PageResponse</code>, one for a page named <code>foo</code> and another for a page named <code>bar</code>. Each defines some content and also defines links that should be sent to the client when this response is generated. The client then loads those links whenever it renders the page and polls for them. When the user hits the keystroke it generates a new request (of type <code>Link</code> and requests that back to the server. Then <code>bar</code> sends back a link that can be used for requesting <code>foo</code>. Therefore, if the user sits there hitting <code>f,b,f,b,f,b</code> they'll just flip back and forth between the <code>foo</code> and <code>bar</code> pages.</p>
+
+<pre>
+func GetPage(pq PageRequest) (pr PageResponse) {
+	if pr.Name == "foo" {
+		return foo(pr)
+	}
+	if pr.Name == "bar" {
+		return bar(pr)
+	}
+}
+
+func foo(pq PageRequest) (pr PageResponse) {
+	pr.DivBoxes.Boxes.append(
+		DivBox{ Name: "main" }
+	)
+	pr.Elements.TextBlobs.append(
+		TextBlob{
+			Content: "foo: press b for bar",
+			DivBoxes: []string("main"),
+		}
+	)
+	pr.KeyStrokes.append(
+		KeyStroke{
+			KeyStroke: "b",
+			Action: Link{	
+				PageName: "bar",
+			}
+		}
+	)
+	return pr	
+}
+
+func bar(pq PageRequest) (pr PageResponse) {
+	pr.DivBoxes.Boxes.append(
+		DivBox{ Name: "main" }
+	)
+	pr.Elements.TextBlobs.append(
+		TextBlob{
+			Content: "bar: press f for foo",
+			DivBoxes: []string("main"),
+		}
+	)
+	pr.KeyStrokes.append(
+		KeyStroke{
+			KeyStroke: "f",
+			Action: Link{	
+				PageName: "foo",
+			}
+		}
+	)
+	return pr	
+}
+</pre> 
+</td>
+<td>
+<pre>
+
+   ┌───────────────────────────────────────┐
+   │                                       │
+   │    ┌──────────────────────────────┐   │
+   │    │ bar: press f for foo         │   │
+   │    │                              │   │
+   │    │                              │   │
+   │    │                              │   │
+   │    │                              │   │
+   │    │                              │   │
+   │    │                              │   │
+   │    └──────────────────────────────┘   │
+   │                                       │
+   │                                       │
+   │                                       │
+   └───────────────────────────────────────┘
+
+
+         (user presses 'f', a new PageRequest
+          for 'foo' is created and sent to
+          server)
+
+   ┌───────────────────────────────────────┐
+   │                                       │
+   │    ┌──────────────────────────────┐   │
+   │    │ foo: press b for bar         │   │
+   │    │                              │   │
+   │    │                              │   │
+   │    │                              │   │
+   │    │                              │   │
+   │    │                              │   │
+   │    │                              │   │
+   │    └──────────────────────────────┘   │
+   │                                       │
+   │                                       │
+   │                                       │
+   └───────────────────────────────────────┘
+
+</pre>
+</td>
+</tr>
+</table>
+<p>So now that you understand some of the basic building blocks I think you can understand how it's possible to build rapid content navigation systems using only the keyboard.</p>
+
+<p>TODO: Tutorial Sections for Forms, Streams, Cookies</p> 
 
 <h2 id="how-to-host-servers">How to Host Servers</h2>
 <p>You'll need some sort of compute for hosting as there's not many ways to host a gRPC server in a "serverless" fashion. Supposedly on <a href="https://cloud.google.com/blog/products/serverless/cloud-run-now-supports-http-grpc-server-streaming">GCP you can do it with Cloud Run</a> but on traditional hosting or on AWS this means hosting on some sort of server or container. For AWS this is EC2, EKS, ECS, etc. AWS Application Load Balancers (ALB) <a href="https://aws.amazon.com/blogs/aws/new-application-load-balancer-support-for-end-to-end-http-2-and-grpc/">support gRPC</a>, so that's nice. </p>
