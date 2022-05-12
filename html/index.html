@@ -7,9 +7,9 @@
 <li><a href="#demo">1.2 Try A Demo</a>
 <li><a href="#how-it-works">1.3 How It Works</a>
 <li><a href="#how-to-build-servers">2 How to Build Servers</a>
-<li><a href="#how-to-build-servers">2.1 Python Servers</a>
-<li><a href="#how-to-build-servers">2.2 Go Servers</a>
-<li><a href="#how-to-host-servers">2.3 How to Host Servers</a>
+<li><a href="#hello-world">2.1 Hello World Servers</a>
+<li><a href="#server-guide">2.3 Generic Server Guide</a>
+<li><a href="#how-to-host-servers">2.4 How to Host Servers</a>
 </ul>
 <h2 id="introduction">Introduction</h2>
 <p>Uggly is a means to generate Terminal User Interfaces in a client-server architecture. Think of it as TUI over-the-wire (TUIOW). The client requests content from the server via gRPC protobuffers and the client handles rendering of that content. The server is sending "pages" of content one screen at a time. The protocol and page definitions take inspiration from CSS/HTML in that there are constructs such as DivBoxes, TextBlobs, Links, and Forms for example. It is opinionated in that only keyboard strokes are supported for link navigation.</p>
@@ -108,15 +108,48 @@ When starting out as a developer, scripter you're usually trying to automate som
 Since there is already an existing <a href="https://github.com/rendicott/uggly-client">client</a> that you can use it may be more helpful to just talk about how one writes a server. 
 
 <h1 id="how-to-build-servers">How to Build Servers</h1>
+<p>The only way to get more great TUI's is to have more people write more of them. I tried to make authoring servers easy and it can be a lot of fun once you get into it. There's something refreshing about using simple building blocks that are easy to understand that make for a very satisfying end product. </p>
 <p>If you're familiar with gRPC then building servers should be fairly straightforward. Both the Python an Go starter guides from <a href="https://grpc.io/">grpc.io</a> were used to form the base of the following sections. If you prefer to write servers in a different language then the <a href="https://github.com/rendicott/uggly">uggly protobuf</a> will be your only guide.</p>
 
+<h2 id="hello-world">Hello-World Servers</h2>
 
-<h2 id="host-python">Python Server</h2>
-<p>Start with the <a href="https://github.com/rendicott/uggly/tree/master/samples/python">python sample hello world</a>.</p>
+<p>If you're just getting started I would recommend writing in Python. The flexibility makes for much easier content generation and for server side you don't have to worry about the distribution and dependency problems.</p>
+
+<p>For Python, start with the <a href="https://github.com/rendicott/uggly/tree/master/samples/python">python sample hello world</a>.</p>
+
+<p>For Golang, start with the <a href="https://github.com/rendicott/uggly/tree/master/samples/go">go sample hello world</a>.</p>
+
+<h2 id="server-guide">Generic Server Guide</h2>
+<p>The initial hurdle of writing uggly servers is understanding the core concepts and that is mostly language agnostic. This section will be all about understanding the basics, core design principles, and tips and tricks. </p>
+
+<p>The heart of every server is the `GetPage` handler which accepts `PageRequest` and returns `PageResponse`. Let's take a look at an excerpt from the docs of a <a href="https://github.com/rendicott/uggly/tree/master/doc#pagerequest">`PageRequest`</a></p>
+
+<table center=true border=1 width="50%"><tr><td>
+<p>A PageRequest contains the name of the
+desired page and some metadata about the
+cient height and width. The server can choose
+to ignore the width and height if it insists
+on statically sized content. Also, the server could
+generate a PageResponse saying something like
+"this server insists on a minimum height to view
+content" for example.</p>
 
 
-<h2 id="host-go">Go Server</h2>
-<p>Start with the <a href="https://github.com/rendicott/uggly/tree/master/samples/go">go sample hello world</a>.</p>
+<table border=1>
+<thead> <tr> <th>Field</th> <th>Type</th> <th>Label</th> <th>Description</th> </tr> </thead>
+<tbody>
+<tr> <td>name</td> <td>string</td> <td></td> <td>The name of the page being requested</td> </tr>
+<tr> <td>clientWidth</td> <td>int32</td> <td></td> <td>The width of the client at the time of the request</td> </tr>
+<tr> <td>clientHeight</td> <td>int32</td> <td></td> <td>The height of the client at the time of the request</td> </tr>
+<tr> <td>formData</td> <td><a href="https://github.com/rendicott/uggly/tree/master/doc#uggly-FormData">FormData</a></td> <td>repeated</td> <td>data from form submissions or could be used to send generic key value pairs</td> </tr>
+<tr> <td>server</td> <td>string</td> <td></td> <td>the intended server for the request</td> </tr>
+<tr> <td>port</td> <td>string</td> <td></td> <td>the intended port for the request</td> </tr>
+<tr> <td>secure</td> <td>bool</td> <td></td> <td>whether or not the connection should be secure (TLS)</td> </tr>
+<tr> <td>sendCookies</td> <td><a href="https://github.com/rendicott/uggly/tree/master/doc#uggly-Cookie">Cookie</a></td> <td>repeated</td> <td>Cookies that are intended to be sent from client to server</td> </tr>
+<tr> <td>stream</td> <td>bool</td> <td></td> <td>whether or not the request is for a page stream</td> </tr>
+</tbody>
+</table>
+</td></tr></table>
 
 <h2 id="how-to-host-servers">How to Host Servers</h2>
 <p>You'll need some sort of compute for hosting as there's not many ways to host a gRPC server in a "serverless" fashion. Supposedly on <a href="https://cloud.google.com/blog/products/serverless/cloud-run-now-supports-http-grpc-server-streaming">GCP you can do it with Cloud Run</a> but on traditional hosting or on AWS this means hosting on some sort of server or container. For AWS this is EC2, EKS, ECS, etc. AWS Application Load Balancers (ALB) <a href="https://aws.amazon.com/blogs/aws/new-application-load-balancer-support-for-end-to-end-http-2-and-grpc/">support gRPC</a>, so that's nice. </p>
